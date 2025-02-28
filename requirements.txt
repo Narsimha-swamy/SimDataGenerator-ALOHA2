@@ -1,0 +1,10 @@
+dm_control
+hydra-core
+h5py
+tqdm
+numpy
+matplotlib
+mujoco==2.3.4
+mink
+loop_rate_limiters
+pyquaternions
