@@ -1,14 +1,14 @@
 task_name: ee_pick_place_3cam
 create_dataset:
-  num_episodes: 10
+  num_episodes: 1
   episode_len: 70
-  dataset_dir: 'data/ee_pick_place'
+  dataset_dir: data/ee_pick_place
   cam_names: ['overhead_cam','worms_eye_cam','wrist_cam_right']
   instruction: "pick place red cube"
   robot_freq: 10 
 scripted_policy:
   _target_: aloha2.scripted_policy.PickPlacePolicy
-
+  cube: red
 
 env:
   _target_: aloha2.sim_env.make_env
@@ -16,6 +16,7 @@ env:
   DT: 0.1
   task: 
     _target_: aloha2.sim_env.PickPlaceTask
+    task: "pick place red cube"
     seed: 0
     cubes: ['red']
     cam_names: ['overhead_cam','worms_eye_cam','wrist_cam_left','wrist_cam_right']

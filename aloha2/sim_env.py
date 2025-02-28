@@ -200,8 +200,8 @@ class BimanualViperXTask(base.Task):
 
 
 class PickPlaceTask(BimanualViperXTask):
-    def __init__(self,seed,cam_names,image_dim,random=None):
-        super().__init__(random=random,seed=seed,cam_names=cam_names,image_dim=image_dim)
+    def __init__(self,cubes,seed,task,cam_names,image_dim,random=None):
+        super().__init__(random=random,cubes=cubes,task=task,seed=seed,cam_names=cam_names,image_dim=image_dim)
         self.max_reward = 3
     
     def initialize_episode(self, physics):
@@ -217,7 +217,7 @@ class PickPlaceTask(BimanualViperXTask):
         super().initialize_episode(physics)
 
     @staticmethod
-    def get_env_state(physics):
+    def get_env_state(physics,cubes):
         env_state ={}
         cubes_qpos_data = physics.data.qpos.copy()[16:]
         # for i,cube in enumerate(cubes):

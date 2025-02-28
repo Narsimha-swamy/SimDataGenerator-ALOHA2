@@ -145,7 +145,7 @@ def record_episodes(cfg: DictConfig):
 
 
 
-        dataset_path = os.path.join(dataset_dir, f'episode_{episode_idx+200}')
+        dataset_path = os.path.join(dataset_dir, f'episode_{episode_idx}')
         with h5py.File(dataset_path + '.hdf5', 'w', rdcc_nbytes=1024 ** 2 * 2) as root:
             root = create_datagroups(data_dict=data_dict,root=root)
         print(f'Saving: {time.time() - t0:.1f} secs\n')
