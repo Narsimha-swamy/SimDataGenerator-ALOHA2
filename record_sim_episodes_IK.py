@@ -29,13 +29,14 @@ def timesteps_for_robot_action(robot_freq,DT):
 @hydra.main(version_base=None,config_path=_CONFIG,config_name='pick_place')
 def record_episodes(cfg: DictConfig):
 
-
+    #import parmaters from config
     dataset_dir = cfg.create_dataset.dataset_dir
     num_episodes = cfg.create_dataset.num_episodes
     instruction = cfg.create_dataset.instruction
     episode_len = cfg.create_dataset.episode_len
     cam_names = cfg.create_dataset.cam_names
 
+    # make dataset dir 
     if not os.path.isdir(dataset_dir):
         os.makedirs(dataset_dir,exist_ok=True)
     
@@ -63,7 +64,7 @@ def record_episodes(cfg: DictConfig):
         episode.append(ts)
         
 
-
+        # get robot action timestep 
         robot_action_ts = timesteps_for_robot_action(cfg.create_dataset.robot_freq,DT= cfg.env.DT)
         max_sim_time = episode_len * robot_action_ts
         for step in tqdm(range(max_sim_time),desc='ts'):
@@ -96,7 +97,6 @@ def record_episodes(cfg: DictConfig):
         actions = [np.concatenate((ts.observation['mocap_pose_left'],[ts.observation['gripper_ctrl'][0]],
                                    ts.observation['mocap_pose_right'],[ts.observation['gripper_ctrl'][1]])) for ts in episode]
     
-        # actions = np.concatenate((ee_pose_traj,gripper_ctrl_traj),axis=1)
 
         
         data_dict = {
@@ -116,7 +116,6 @@ def record_episodes(cfg: DictConfig):
 
 
 
-        max_timesteps = len(actions)
         while actions:
             action = actions.pop(0)
             ts = episode.pop(0)
@@ -129,22 +128,14 @@ def record_episodes(cfg: DictConfig):
             # HDF5
         t0 = time.time()
 
-
-
-
-        #TODO get stats
+        # get stats
         data_dict['stats']= {'qpos':{'min': np.min(data_dict['observations']['qpos'],axis=0),
                                     'max': np.max(data_dict['observations']['qpos'],axis=0)},
 
                                     'action': {'min': np.min(data_dict['action'],axis=0),
                                     'max': np.max(data_dict['action'],axis=0)}}
 
-        
-
-
-
-
-
+        # define path to store hdf5
         dataset_path = os.path.join(dataset_dir, f'episode_{episode_idx}')
         with h5py.File(dataset_path + '.hdf5', 'w', rdcc_nbytes=1024 ** 2 * 2) as root:
             root = create_datagroups(data_dict=data_dict,root=root)
@@ -169,8 +160,6 @@ def record_episodes(cfg: DictConfig):
 
     
 
-
-
 # function to recurseively make datagroups based on data dect
 def create_datagroups(data_dict,root):
     if isinstance(data_dict,dict):
@@ -186,7 +175,4 @@ def create_datagroups(data_dict,root):
 
 
 if __name__=='__main__':
-
-    
-
   record_episodes()
